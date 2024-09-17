@@ -81,10 +81,6 @@ export interface DeepARParams {
              */
             facingMode?: string;
             /**
-             * Rotate the input camera. valid values: 0, 90, 180, 270.
-             */
-            rotation?: number;
-            /**
              * Called when the camera permission is asked.
              */
             cameraPermissionAsked?: () => void;
@@ -99,8 +95,11 @@ export interface DeepARParams {
          * <ul>
          *     <li><b>faceModelsPredownload</b> - Will download the face models as soon as possible.</li>
          *     <li><b>segmentationModelsPredownload</b> - Will download the segmentation models as soon as possible. Note - it will not try to initialize segmentation. Segmentation will be lazy loaded when needed.</li>
+         *     <li><b>footModelsPredownload</b> - Will download the foot models as soon as possible. Note - it will not try to initialize foot tracking. Foot tracking will be lazy loaded when needed.</li>
          *     <li><b>segmentationInit</b> - Will initialize segmentation as soon as possible. Without this hint segmentation is lazy loaded when some segmentation effect is loaded.</li>
          *     <li><b>faceInit</b> - Will initialize face tracking as soon as possible. Without this hint face tracking is lazy loaded when some face tracking effect is loaded.</li>
+         *     <li><b>footInit</b> - Will initialize foot tracking as soon as possible. Without this hint foot tracking is lazy loaded when some foot tracking effect is loaded.</li>
+         *     <li><b>wristInit</b> - Will initialize wrist tracking as soon as possible. Without this hint wrist tracking is lazy loaded when some wrist tracking effect is loaded.</li>
          * </ul>
          */
         hint?: string | string[];
@@ -119,15 +118,15 @@ export interface DeepARParams {
              */
             poseEstimationWasmPath?: string;
             /**
-             * Path to the detector model, e.g. "/path/to/deepar/models/face-cnn/face-det.bin".
+             * Path to the detector model, e.g. "/path/to/deepar/models/foot/foot-detector.bin".
              */
             detectorPath?: string;
             /**
-             * Path to the tracker model, e.g. "/path/to/deepar/models/face-cnn/face-track-19-v2.bin".
+             * Path to the tracker model, e.g. "/path/to/deepar/models/foot/foot-tracker.bin".
              */
             trackerPath?: string;
             /**
-             * Path to the face model object file, e.g. "/path/to/deepar/models/face/face-rigid.obj".
+             * Path to the foot model object file, e.g. "/path/to/deepar/models/foot/foot-model.obj".
              */
             objPath?: string;
             /**
@@ -168,7 +167,6 @@ export interface DeepARParams {
         };
         /**
          * Foot tracking module paths and options.
-         * @internal
          */
         footTrackingConfig?: {
             /**
@@ -202,7 +200,6 @@ export interface DeepARParams {
         };
         /**
          * Foot tracking module paths and options.
-         * @internal
          */
         wristTrackingConfig?: {
             /**
@@ -297,14 +294,5 @@ export interface DeepARParams {
          * Tone mapping.
          */
         toneMapping?: ToneMapping;
-        /**
-         * Pixel ratio used for scaling the canvas.
-         * By default, SDK uses min(window.devicePixelRatio, 2).
-         */
-        pixelRatio?: number;
-        /**
-         * @internal
-         */
-        onVerify?: (x: any) => any;
     };
 }

@@ -1,6 +1,5 @@
 /**
  * Information about the wrist being tracked. WristData object is constructed and passed in the {@link DeepARCallbacks.onWristTracked} callback.
- * @internal
  */
 export interface WristData {
     /**

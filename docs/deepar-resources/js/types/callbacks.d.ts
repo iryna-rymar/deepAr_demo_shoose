@@ -23,21 +23,18 @@ export interface DeepARCallbacks {
      * NOTE: This callback is only called when the SDK does foot tracking. For example, you laded some effect that uses foot tracking (shoe-try-on effects). But if no effect is loaded this callback will not get called because the SDK is not performing foot tracking.
      * @param leftFootData Information about the left foot.
      * @param rightFootData Information about the right foot.
-     * @internal
      */
     onFeetTracked?: (leftFootData: FootData, rightFootData: FootData) => void;
     /**
      * Passes the information about the detected wrist. If this callback is set, it will get called every frame.
      * NOTE: This callback is only called when the SDK does wrist tracking. For example, you laded some effect that uses wrist tracking (watch-try-on effects). But if no effect is loaded this callback will not get called because the SDK is not performing wrist tracking.
      * @param wristData Information about the wrist.
-     * @internal
      */
     onWristTracked?: (wristData: WristData) => void;
     /**
      * Called when foot tracking is fully initialized.
      * Be sure to check {@link DeepAR.isFootTrackingInitialized} before setting this callback.
      * Because this callback is called only once. So if you set this callback after the foot tracking is initialized, it will not be called again.
-     * @internal
      */
     onFootTrackingInitialized?: () => void;
     /**
@@ -50,7 +47,6 @@ export interface DeepARCallbacks {
      * Called when wrist tracking is fully initialized.
      * Be sure to check {@link DeepAR.isWristTrackingInitialized} before setting this callback.
      * Because this callback is called only once. So if you set this callback after the wrist tracking is initialized, it will not be called again.
-     * @internal
      */
     onWristTrackingInitialized?: () => void;
     /**
@@ -64,10 +60,5 @@ export interface DeepARCallbacks {
      * @internal
      */
     __deeparRendered?: (canvas: HTMLCanvasElement) => void;
-    /**
-     * An internal callback called on every render() after __deeparRendered.
-     * @param canvas A canvas containing input camera image that DeepAR used for rendering/tracking.
-     * @internal
-     */
     __deeparRendered2?: (canvas: HTMLCanvasElement) => void;
 }

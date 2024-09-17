@@ -205,7 +205,7 @@ export declare class DeepAR {
      *
      * @param newPreviewElement The previewElement to change to.
      */
-    changePreviewElement(newPreviewElement: HTMLElement, pixelRatio?: number): void;
+    changePreviewElement(newPreviewElement: HTMLElement): void;
     /**
      * Shutdown the DeepAR SDK and release all resources associated with it. It is invalid to call any function from this {@link DeepAR} object after shutdown.
      * After shutdown call, it is possible to call {@link initialize} again.
@@ -319,12 +319,10 @@ export declare class DeepAR {
      *
      * If the foot tracking is already initialized it will do nothing.
      * To check if foot tracking is initialized call {@link isFootTrackingInitialized} or wait {@link DeepARCallbacks.onFootTrackingInitialized} callback.
-     * @internal
      */
     initializeFootTracking(): void;
     /**
      * Check weather the foot tracking is initialized.
-     * @internal
      */
     isFootTrackingInitialized(): boolean;
     /**
@@ -344,7 +342,6 @@ export declare class DeepAR {
     isSegmentationInitialized(): boolean;
     /**
      * Check weather the wrist tracking is initialized.
-     * @internal
      */
     isWristTrackingInitialized(): boolean;
     /**
@@ -503,42 +500,4 @@ export declare class DeepAR {
      * Resets tone mapping to the one that was specified within an effect file.
      */
     resetToneMapping(): void;
-    /**
-     * Toggles bloom postprocessing.
-     */
-    setBloomEnabled(enabled: boolean): void;
-    /**
-     * Sets bloom threshold parameter.
-     *
-     * Value passed here overrides the one specified within an effect file.
-     * @param threshold bloom threshold
-     */
-    setBloomThreshold(threshold: number): void;
-    /**
-     * Sets bloom strength parameter.
-     *
-     * Value passed here overrides the one specified within an effect file.
-     * @param strength bloom strength
-     */
-    setBloomStrength(strength: number): void;
-    /**
-     * Sets bloom radius parameter.
-     *
-     * Value passed here overrides the one specified within an effect file.
-     * @param radius bloom radius
-     */
-    setBloomRadius(radius: number): void;
-    /**
-     * Sets new environment map that will be used for rendering materials with diamond shader.
-     *
-     * Overrides environment map specified within an effect file.
-     * @param envmap Path to fetch or ArrayBuffer with an image.
-     */
-    setDiamondEnvironmentMap(envmap: string | ArrayBuffer): Promise<void>;
-    /**
-     * Sets the input video/camera rotation.
-     *
-     * @param rotation
-     */
-    setVideoRotation(rotation: number): void;
 }

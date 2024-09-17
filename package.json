@@ -19,6 +19,6 @@
     "webpack-dev-server": "^4.11.0"
   },
   "dependencies": {
-    "deepar": "^5.6.10"
+    "deepar": "^5.6.3"
   }
 }

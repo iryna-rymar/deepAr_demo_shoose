@@ -9,6 +9,7 @@ DeepAR Web supports:
 - Face filters and masks.
 - Background replacement.
 - Background blur.
+- Shoe try-on.
 - AR mini-games.
 
 ## Documentation
@@ -55,8 +56,6 @@ Add the following code to an HTML file:
 ```html
 <html>
 <head>
-  <!-- Ensure compatibility and performance on mobile -->
-  <meta name="viewport" content="width=device-width, initial-scale=1 "/>
   <!-- Load deepar.js -->
   <script src='https://cdn.jsdelivr.net/npm/deepar/js/deepar.js'> </script>
 </head>
@@ -160,19 +159,25 @@ await deepAR.backgroundReplacement(true, 'images/sunny_beach.png')
 ## Callbacks
 
 DeepAR has some callbacks you can implement for additional informations. For example,
-to check if face is detected in the scene.
+to check if feet are visible in the camera preview.
 ```javascript
-await deepAR.switchEffect('https://cdn.jsdelivr.net/npm/deepar/effects/aviators');
-deepAR.callbacks.onFaceTracked = function(faceDataArr) {
-    if (faceDataArr[0].detected) {
-        console.log("Face is detected!");
+await deepAR.switchEffect('https://cdn.jsdelivr.net/npm/deepar/effects/Shoe');
+deepAR.callbacks.onFeetTracked = (leftFoot, rightFoot) => {
+    if(leftFoot.detected && rightFoot.detected) {
+        console.log('Both foot detected!');
+    } else if (leftFoot.detected) {
+        console.log('Left foot detected!');
+    } else if (rightFoot.detected) {
+        console.log('Right foot detected!');
+    } else {
+        console.log('No feet detected!');
     }
 };
 ```
 
 To remove callback if you don't need it anymore.
 ```javascript
-deepAR.callbacks.onFaceTracked = undefined;
+deepAR.callbacks.onFeetTracked = undefined;
 ```
 
 ## Different video sources
@@ -223,25 +228,6 @@ const deepAR = await deepar.initialize({
 
 // When you want to ask the camera permission and start the camera.
 await deepAR.startCamera();
-```
-
-In cases where the camera aspect ratio doesn't match the screen aspect ratio, it is possible to rotate the camera input to achieve better camera quality.
-This is usually the case for in-store AR screens which have portrait screens, but use standard landscape webcams.
-To improve camera quality in those cases, rotate the camera physically 90° and call the following API.
-```javascript
-const deepAR = await deepar.initialize({
-    // ...
-    additionalOptions: {
-        cameraConfig: {
-            rotation: 90 // or 270
-        }
-    }
-});
-```
-
-If you are using non-default DeepAR camera apply the rotation with:
-```javascript
-deepAR.setVideoRotation(90) // or 270
 ```
 
 ## Providing your own canvas for rendering
@@ -339,6 +325,15 @@ const deepAR = await deepar.initialize({
         },
         segmentationConfig: {
             modelPath: 'path/to/deepar/models/segmentation/segmentation-160x160-opt.bin'
+        },
+        footTrackingConfig: {
+            poseEstimationWasmPath: 'path/to/deepar/wasm/libxzimgPoseEstimation.wasm',
+            detectorPath: 'path/to/deepar/models/foot/foot-detection-96x96x6.bin',
+            trackerPath: 'path/to/deepar/models/foot/foot-tracker-96x96x18-test.bin',
+            objPath: 'path/to/deepar/models/foot/foot-model.obj',
+            tfjsBackendWasmPath: 'path/to/deepar/wasm/tfjs-backend-wasm.wasm',
+            tfjsBackendWasmSimdPath: 'path/to/deepar/wasm/tfjs-backend-wasm-simd.wasm',
+            tfjsBackendWasmThreadedSimdPath: 'path/to/deepar/wasm/tfjs-backend-wasm-threaded-simd.wasm',
         },
         deeparWasmPath: 'path/to/deepar/wasm/deepar.wasm'
     }

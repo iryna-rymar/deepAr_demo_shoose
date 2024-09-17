@@ -1,6 +1,5 @@
 /**
  * Information about the feet being tracked. FootData object is constructed and passed in the {@link DeepARCallbacks.onFeetTracked} callback.
- * @internal
  */
 export interface FootData {
     /**
