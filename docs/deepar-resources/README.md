@@ -1,21 +1,31 @@
 # deepar
 
-DeepAR SDK for Web is an augmented reality SDK that allows users to integrate advanced, Snapchat-like face lenses in the browser environment. It supports face masks, effects, multiple face tracking, natural image tracking.
-The SDK requires an internet connection.
+DeepAR Web is an augmented reality SDK
+that allows users to integrate advanced, Snapchat-like
+face lenses in the browser environment.
+
+DeepAR Web supports:
+- Glasses try-on.
+- Face filters and masks.
+- Background replacement.
+- Background blur.
+- AR mini-games.
 
 ## Documentation
 
-Visit the official DeepAR docs for Web SDK here: https://docs.deepar.ai/category/deepar-sdk-for-web  
-See the official example here: https://github.com/DeepARSDK/quickstart-web-js-npm
+- Visit official DeepAR docs for Web SDK here https://docs.deepar.ai/deepar-sdk/platforms/web/overview.
+- See the official example here: https://github.com/DeepARSDK/quickstart-web-js-npm
+- Set up and web ad with DeepAR: https://github.com/DeepARSDK/quickstart-web-ad
+- Full API reference [here](https://docs.deepar.ai/deepar-sdk/deep-ar-sdk-for-web/api-reference).
 
-## Prerequisites
-
-> ⚠️ Note that these steps are only needed when deploying to production (non-localhost) domain.
+## License key
 
 In order to use the DeepAR Web SDK you need to set up a license key for your web app on [developer.deepar.ai](https://developer.deepar.ai).
 1. Create an account: https://developer.deepar.ai/signup.
 2. Create a project: https://developer.deepar.ai/projects.
 3. Add a web app to the project. Note that you need to specify the domain name which you plan to use for hosting the app.
+
+> ⚠️ The license key property is required both in a production and development (localhost) environment. Development sessions will not count towards your monthly active usage.
 
 ## Installation
 
@@ -31,198 +41,307 @@ Using `yarn`:
 $ yarn add deepar
 ```
 
-## Bundler setup
+## Getting started
+There are two main ways to get deepar.js in your JavaScript project:
+via [script tags](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_JavaScript_within_a_webpage)
+or by installing it from [NPM](https://www.npmjs.com/package/deepar)
+and using a build tool like
+[Parcel](https://parceljs.org/),
+[WebPack](https://webpack.js.org/),
+or [Rollup](https://rollupjs.org/guide/en).
 
-We recommend using a bundler to correctly include assets like models, effects and WebAssembly files.
-
-For example, if using Webpack, add this to your `webpack.config.js`:
-
-```javascript
-module.exports = {
-  // ...
-  module: {
-    rules: [
-      {
-        test: /\.(wasm)|(bin)|(obj)$/i,
-        include: [
-          path.resolve(__dirname, 'node_modules/deepar/'),
-        ],
-        type: 'asset/resource',
-      },
-      {
-        include: [
-          path.resolve(__dirname, 'effects/'),
-        ],
-        type: 'asset/resource',
-      },
-    ],
-  },
-  // ...
-```
-
-## Canvas
-
-DeepAR requires a `canvas` element for the preview of camera, masks, filters and effects. You can add it directly in the HTML.
-
+### via Script tag
+Add the following code to an HTML file:
 ```html
-<!DOCTYPE HTML>
 <html>
 <head>
-  <title>DeepAR</title>
+  <!-- Ensure compatibility and performance on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1 "/>
+  <!-- Load deepar.js -->
+  <script src='https://cdn.jsdelivr.net/npm/deepar/js/deepar.js'> </script>
 </head>
+
 <body>
-  <canvas width="1280" height="720" id="deepar-canvas"></canvas>
+  <!-- Div element where AR preview will be inserted -->
+  <div style='width: 640px; height: 360px' id='deepar-div'></div>
+  <!-- Initialize DeepAR and load AR effect/filter -->
+  <script>
+    (async function() {
+      const deepAR = await deepar.initialize({
+        licenseKey: 'your_license_key_here',
+        previewElement: document.querySelector('#deepar-div'),
+        effect: 'https://cdn.jsdelivr.net/npm/deepar/effects/aviators'
+      });
+    })();
+  </script>
 </body>
 </html>
 ```
 
-Or you can create it in Javascript.
-```javascript
-let canvas = document.createElement("canvas");
+Alternatively, you can import DeepAR as an ES6 module.
+
+Via `<script type='module'>`.
+```html
+<script type='module'>
+  import * as deepar from 'https://cdn.jsdelivr.net/npm/deepar/js/deepar.esm.js';
+</script>
 ```
 
-> **Note:** Be sure to set `width` and `height` properties of the `canvas`!
-
-## Initialize DeepAR
-
-Import DeepAR module and DeepAR WebAssembly file.  
-If you wish to use an effect that uses face tracking, import the face tracking model and the effect.
-
+Or via dynamic [import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import).
 ```javascript
-import { DeepAR } from 'deepar';
-import deeparWasmPath from 'deepar/wasm/deepar.wasm';
-
-import faceTrackingModelPath from 'deepar/models/face/models-68-extreme.bin';
-import someEffect from './path/to/effect_file';
+const deepar = await import('https://cdn.jsdelivr.net/npm/deepar/js/deepar.esm.js');
 ```
 
-Then initialize DeepAR.
+### via NPM
+Add deepar.js to your project using [yarn](https://yarnpkg.com/en/) or
+[npm](https://docs.npmjs.com/cli/npm).
+
+**Note**: Because we use ES2017 syntax (such as import),
+this workflow assumes you are using a modern browser or a
+bundler/transpiler to convert your code to something older browsers
+understand. However, you are free to use any build tool that you prefer.
 
 ```javascript
-const deepAR = new DeepAR({
-  licenseKey: 'your_license_key_here',  
-  canvas: document.getElementById('deepar-canvas'),
-  deeparWasmPath,
-  callbacks: {
-    onInitialize: function() {
-      deepAR.startVideo(true);
-      deepAR.switchEffect(0, 'mask', someEffect);
-    },
-  },
+import * as deepar from 'deepar';
+
+const deepAR = await deepar.initialize({
+  licenseKey: 'your_license_key_here', 
+  previewElement: document.querySelector('#deepar-canvas'),
+  effect: 'https://cdn.jsdelivr.net/npm/deepar/effects/aviators' 
 });
-
-// Download the face tracking model. This is requred in order to track face.
-deepAR.downloadFaceTrackingModel(faceTrackingModelPath);
-```
-
-## Callbacks
-
-DeepAR will call specified callbacks on certain events. List of all callbacks can be found in API reference.
-
-> **IMPORTANT** You always need to provide `onInitialize` callback since most of the DeepAR methods will not work
-> until SDK has fully initialized.
-
-You can provide callbacks in the constructor of the `DeepAR` class in the `callbacks` parameter.
-```javascript
-const deepAR = new DeepAR({
-  callbacks: {
-    onInitialize: function() {
-      // This is where you start camera preview and start loading effects
-    },
-    onScreenshotTaken: function(imageUrl) {
-      // Show and/or save the screenshot
-    },
-    onFaceTracked: function(faceData) {
-      // Inspect the face tracking features
-    }
-  },
-  // other parameters ...
-});
-```
-Add or change callbacks via `DeepAR.callbacks` property.
-
-```javascript
-deepAR.callbacks.onScreenshotTaken = (url) => {
-    // download or show the image from url
-}
-```
-
-To remove certain callback:
-```javascript
-deepAR.callbacks.onScreenshotTaken = undefined;
 ```
 
 ## Switch effects
 
-All masks, filters, background removal, etc. are represented by effect files in DeepAR. You can load them to preview the effect.
-You can download a free filter pack here: https://docs.deepar.ai/deep-ar-studio/free-filter-pack.
+AR filters are represented by effect files in DeepAR. You can load them to preview the effect.
+
+Places you can get DeepAR effects:
+- Download a free filter pack: https://docs.deepar.ai/deepar-sdk/filters#free-effects-pack-content.
+- Visit DeepAR asset store: https://www.store.deepar.ai/
+- Create your own filters with [DeepAR Studio](https://www.deepar.ai/creator-studio).
 
 Load an effect using the `switchEffect` method:
 ```javascript
-import alienEffect from './effects/alien';
-
-// ...
-
-deepAR.switchEffect(0, 'slot', alienEffect);
+await deepAR.switchEffect('path/to/effect/alien');
 ```
 
-Load different effects on different persons' faces:
+## Take screenshot or video
+
+Take a screenshot.
 ```javascript
-import alienEffect from './effects/alien';
-import lionEffect from './effects/lion';
-
-// ...
-
-deepAR.switchEffect(0, 'slot', alienEffect);
-deepAR.switchEffect(1, 'slot', lionEffect);
+// The image is a data url.
+const image = await deepAR.takeScreenshot();
 ```
 
-Load a background removal effect:
+Record a video.
 ```javascript
-import segmentationEffect from './effects/background_segmentation';
-
-// ...
-
-deepAR.switchEffect(0, 'slot', segmentationEffect);
+await deepAR.startVideoRecording();
+// Video is now recording...
+// When user is ready to stop recording.
+const video = await deepAR.finishVideoRecording();
 ```
 
-## Background removal or blur
+## Background blur
 
-To use background segmentation DeepAR needs to initialize the segmentation model.
-
+Enable background blur with strength 5.
 ```javascript
-import segmentationModelPath from 'deepar/models/segmentation/segmentation-160x160-opt.bin';
+await deepAR.backgroundBlur(true, 5)
+```
 
-// ...
+## Background replacement
 
-const deepAR = new DeepAR({
-  segmentationConfig: {
-    modelPath: segmentationModelPath,
-  },
-  // other params ...
+This is also known as background removal or green screen effect.
+
+Enable background replacement with an image of a sunny beach.
+```javascript
+await deepAR.backgroundReplacement(true, 'images/sunny_beach.png')
+```
+
+## Callbacks
+
+DeepAR has some callbacks you can implement for additional informations. For example,
+to check if face is detected in the scene.
+```javascript
+await deepAR.switchEffect('https://cdn.jsdelivr.net/npm/deepar/effects/aviators');
+deepAR.callbacks.onFaceTracked = function(faceDataArr) {
+    if (faceDataArr[0].detected) {
+        console.log("Face is detected!");
+    }
+};
+```
+
+To remove callback if you don't need it anymore.
+```javascript
+deepAR.callbacks.onFaceTracked = undefined;
+```
+
+## Different video sources
+
+DeepAR will by default use the user facing camera. It will also ask the
+camera permission from the user.
+
+Use the back camera on the phones:
+```javascript
+const deepAR = await deepar.initialize({
+  // ...
+  additionalOptions: {
+      cameraConfig: {
+          facingMode: 'environment'
+      }
+  }
 });
 ```
 
-## Shoe try-on
+Set up your own camera or custom video source:
+```javascript
+const deepAR = await deepar.initialize({
+  // ...
+  additionalOptions: {
+      cameraConfig: {
+          disableDefaultCamera: true
+      }
+  }
+});
 
-To use shoe try-on feature DeepAR needs to initialize foot tracking. All the `footTrackingConfig` parameters are required.
+// HTMLVideoElement that can contain camera or any video.
+const video = ...;
+
+deepAR.setVideoElement(video, true);
+```
+
+Initialize DeepAR but start the camera later.
+This is used when you do not want to ask the camera permission right away.
+```javascript
+const deepAR = await deepar.initialize({
+    // ...
+    additionalOptions: {
+        cameraConfig: {
+            disableDefaultCamera: true
+        }
+    }
+});
+
+// When you want to ask the camera permission and start the camera.
+await deepAR.startCamera();
+```
+
+In cases where the camera aspect ratio doesn't match the screen aspect ratio, it is possible to rotate the camera input to achieve better camera quality.
+This is usually the case for in-store AR screens which have portrait screens, but use standard landscape webcams.
+To improve camera quality in those cases, rotate the camera physically 90° and call the following API.
+```javascript
+const deepAR = await deepar.initialize({
+    // ...
+    additionalOptions: {
+        cameraConfig: {
+            rotation: 90 // or 270
+        }
+    }
+});
+```
+
+If you are using non-default DeepAR camera apply the rotation with:
+```javascript
+deepAR.setVideoRotation(90) // or 270
+```
+
+## Providing your own canvas for rendering
+
+Create canvas directly in the HTML:
+```html
+<canvas width='1280' height='720'></canvas>
+```
+
+Or you can create it in Javascript.
+```javascript
+const canvas = document.createElement('canvas');
+// Set canvas size, accounting screen resolution (to make it look 🤌 even on high definition displays)
+const canvasSize = { width: 640, height: 360 };
+const dpr = window.devicePixelRatio || 1;
+canvas.style.maxWidth = `${canvasSize.width}px`;
+canvas.style.maxHeight = `${canvasSize.height}px`;
+canvas.width = Math.floor(canvasSize.width * dpr);
+canvas.height = Math.floor(canvasSize.height * dpr);
+```
+
+> ⚠️ **Note:** Be sure to set `width` and `height` properties of the `canvas`!
+
+You can always change the canvas dimensions and they don't have to match the
+input video resolution. DeepAR will fit the input camera/video stream correctly
+to any canvas size.
+
+You pass the canvas when initializing DeepAR.
+```javascript
+await deepar.initialize({
+  canvas: canvas, 
+  // ...
+});
+```
+
+## Download speed optimizations for DeepAR Web
+
+Apart from the main *deepar.js* file and AR effect files, DeepAR uses additional files like:
+- WebAssembly (WASM) files.
+- ML model files.
+
+Some of them are required and will be downloaded every time. The others will be lazy
+downloaded when/if needed.
+
+> ⚠️ DeepAR will by default automatically fetch all additional resources from the [JsDelivr](https://www.jsdelivr.com/) CDN.
+
+Fetching files from JsDelivr is not recommended if you care about download
+speeds of DeepAR Web resources. This is because the files on JsDelivr are not compressed.
+
+### Compression
+
+To optimize download speeds, all the DeepAR files should be compressed.
+It is recommended to serve DeepAR files from your own server or some CDN which supports file compression.
+
+> If it is supported, you should use [GZip](https://developer.mozilla.org/en-US/docs/Glossary/GZip_compression) or
+> [Brotli](https://developer.mozilla.org/en-US/docs/Glossary/Brotli_compression) compression on all DeepAR files which will significantly reduce the
+> SDK size. Check out your server/CDN options for compressing files.
+
+### Custom deployment of DeepAR Web
+
+DeepAR Web can be downloaded from [DeepAR Developer Portal](https://developer.deepar.ai/downloads).
+But since most users will install DeepAR through NPM, follow the next instructions.
+
+It is recommended to copy `./node_modules/deepar` directory which contains all the DeepAR
+files into your distribution (dist) folder.
+You can use `rootPath` to set a path to the custom root of the DeepAR SDK. All additional files
+that need to be fetched by DeepAR will be resolved against the given `rootPath`.
 
 ```javascript
-import poseEstimationWasmPath from 'deepar/wasm/libxzimgPoseEstimation.wasm';
-import footDetectorPath from 'deepar/models/foot/foot-detection-96x96x6.bin';
-import footTrackerPath from 'deepar/models/foot/foot-tracker-96x96x18-test.bin'; // or foot-tracker-96x96x13-test.bin
-import footObjPath from 'deepar/models/foot/foot-model.obj';
+const deepAR = await deepar.initialize({
+  // ...
+  rootPath: 'path/to/root/deepar/directory'
+});
+```
 
-// ...
+> It is recommended to setup the copying of the DeepAR directory as part of you bundler build scripts,
+> in case you ever need to updated to a newer version of DeepAR.
 
-const deepAR = new DeepAR({
-  footTrackingConfig: {
-    poseEstimationWasmPath,
-    detectorPath: footDetectorPath,
-    trackerPath: footTrackerPath,
-    objPath: footObjPath,
-  },
-  // other params ...
+#### Specifying paths for each file
+
+Another option, instead of using the DeepAR directory and copying it as-is, is to specify
+a path to each file. The advantage of this is that you can use the bundler to keep track of your files.
+
+For example, if using [Webpack](https://webpack.js.org/), you can use it's
+[asset modules](https://webpack.js.org/guides/asset-modules/) to import all the files needed.
+
+Pass the file paths in `additionalOptions`.
+
+```javascript
+const deepAR = await deepar.initialize({
+    // ...
+    additinalOptions: {
+        faceTrackingConfig: {
+            modelPath: 'path/to/deepar/models/face/models-68-extreme.bin'
+        },
+        segmentationConfig: {
+            modelPath: 'path/to/deepar/models/segmentation/segmentation-160x160-opt.bin'
+        },
+        deeparWasmPath: 'path/to/deepar/wasm/deepar.wasm'
+    }
 });
 ```
 
