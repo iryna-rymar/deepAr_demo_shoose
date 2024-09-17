@@ -1,0 +1,16 @@
+{
+  "name": "deepar",
+  "version": "4.1.0",
+  "description": "The official DeepAR Web SDK",
+  "main": "js/deepar.esm.js",
+  "typings": "js/deepar.esm.d.ts",
+  "keywords": [
+    "deepar",
+    "web",
+    "sdk",
+    "ar",
+    "effects"
+  ],
+  "author": "deepar",
+  "license": "SEE LICENSE IN LICENSE.txt"
+}
